@@ -21,7 +21,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { collection, query, orderBy, getDocs, doc, updateDoc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../firebase/config';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -31,7 +31,7 @@ import AdminOrderService, {
   ORDER_PRIORITIES, 
   SHIPPING_CARRIERS 
 } from '../utils/orderService';
-import { formatCurrency, formatIndianNumber } from '../utils/formatUtils';
+import { formatCurrency, formatPi } from '../utils/formatUtils';
 
 /**
  * Main Orders Management Component
@@ -825,7 +825,7 @@ function Orders() {
    * Format price as currency (from original code)
    */
   const formatPrice = (price) => {
-    return `₹${Number(price).toFixed(2)}`;
+    return `Pi${Number(price).toFixed(2)}`;
   };
 
 
@@ -982,12 +982,12 @@ function Orders() {
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                 <span className="text-gray-600">Total Orders:</span>
-                <span className="font-semibold text-gray-900">{formatIndianNumber(orders.length)}</span>
+                <span className="font-semibold text-gray-900">{formatPi(orders.length)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                 <span className="text-gray-600">Showing:</span>
-                <span className="font-semibold text-gray-900">{formatIndianNumber(filteredOrders.length)}</span>
+                <span className="font-semibold text-gray-900">{formatPi(filteredOrders.length)}</span>
               </div>
               {selectedOrderIds.size > 0 && (
                 <div className="flex items-center gap-2">
@@ -2052,7 +2052,7 @@ function Orders() {
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="text-blue-600 text-sm font-medium mb-1">Total Orders</div>
                   <div className="text-2xl font-bold text-blue-900">
-                    {formatIndianNumber(analyticsData.totalOrders)}
+                    {formatPi(analyticsData.totalOrders)}
                   </div>
                 </div>
                 
@@ -2073,7 +2073,7 @@ function Orders() {
                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                   <div className="text-orange-600 text-sm font-medium mb-1">Unique Customers</div>
                   <div className="text-2xl font-bold text-orange-900">
-                    {formatIndianNumber(analyticsData.totalUniqueCustomers)}
+                    {formatPi(analyticsData.totalUniqueCustomers)}
                   </div>
                 </div>
               </div>

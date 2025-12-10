@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../firebase/config";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {

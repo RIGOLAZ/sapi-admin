@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '../../firebase/config';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { Trash2, Plus, Edit, Check, X, Globe, ExternalLink, Image as ImageIcon } from 'react-feather';

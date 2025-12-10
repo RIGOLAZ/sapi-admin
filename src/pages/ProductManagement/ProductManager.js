@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, deleteDoc, doc, updateDoc, writeBatch } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../firebase/config";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {

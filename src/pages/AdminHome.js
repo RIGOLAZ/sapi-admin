@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { collection, query, getDocs, orderBy, limit } from "firebase/firestore";
-import { db } from "../firebase";
+import { auth, db } from '../firebase/config';
 import { formatCurrency, formatLakhs } from "../utils/formatUtils";
 import {
   Home, Package, Users, ShoppingBag, Tag, Image as ImageIcon,

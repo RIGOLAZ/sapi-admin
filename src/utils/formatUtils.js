@@ -10,7 +10,7 @@
  * @param {number} decimals - Number of decimal places (default: 2)
  * @returns {string} - Formatted number string
  */
-export const formatIndianNumber = (amount, decimals = 2) => {
+export const formatPi = (amount, decimals = 2) => {
   // Convert to string with fixed decimals
   const formattedNumber = parseFloat(amount).toFixed(decimals);
   
@@ -41,10 +41,10 @@ export const formatIndianNumber = (amount, decimals = 2) => {
  * Format a currency amount to Indian Rupees format
  * @param {number} amount - The amount to format
  * @param {number} decimals - Number of decimal places (default: 2)
- * @returns {string} - Formatted currency string with ₹ symbol
+ * @returns {string} - Formatted currency string with Pi symbol
  */
 export const formatCurrency = (amount, decimals = 2) => {
-  return `₹${formatIndianNumber(amount, decimals)}`;
+  return `Pi${formatPi(amount, decimals)}`;
 };
 
 /**
@@ -54,7 +54,7 @@ export const formatCurrency = (amount, decimals = 2) => {
  * @returns {string} - Formatted string with 'lakh' suffix
  */
 export const formatLakhs = (value, decimals = 1) => {
-  return `₹${(value/100000).toFixed(decimals)} lakh`;
+  return `Pi${(value/100000).toFixed(decimals)} lakh`;
 };
 
 /**
@@ -64,7 +64,7 @@ export const formatLakhs = (value, decimals = 1) => {
  * @returns {string} - Formatted string with 'crore' suffix
  */
 export const formatCrores = (value, decimals = 2) => {
-  return `₹${(value/10000000).toFixed(decimals)} crore`;
+  return `Pi${(value/10000000).toFixed(decimals)} crore`;
 };
 
 /**

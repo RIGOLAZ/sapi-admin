@@ -35,7 +35,7 @@ import {
   runTransaction,
   writeBatch
 } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../firebase/config';
 
 /**
  * Order status constants for consistent admin management

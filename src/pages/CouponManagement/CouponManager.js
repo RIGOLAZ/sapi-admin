@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from '../../firebase/config';
 
 /**
  * CouponManager Component
