@@ -1,16 +1,29 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import PiNetworkIcon from '../assets/pi-store.svg';
 import { toast } from "react-toastify";
 import { collection, query, getDocs, orderBy, limit } from "firebase/firestore";
-import { auth, db } from '../firebase/config';
+import { db } from '../firebase/config';
 import { formatCurrency, formatLakhs } from "../utils/formatUtils";
 import {
   Home, Package, Users, ShoppingBag, Tag, Image as ImageIcon,
-  Bell, LogOut, TrendingUp, DollarSign, ShoppingCart, Menu, X,
+  Bell, LogOut, TrendingUp, ShoppingCart, Menu, X,
   ChevronRight, Activity
 } from "react-feather";
 import { Card, LoadingSpinner, Badge } from "../components/ui";
+
+// Composant Pi Icon personnalisé
+
+const PiIcon = ({ className, size = 24, color = "currentColor" }) => (
+  <img 
+    src={PiNetworkIcon} 
+    alt="Pi Network" 
+    className={className}
+    style={{ width: size, height: size }}
+  />
+);
+
 
 // Import recharts components
 const ChartComponents = () => {
@@ -381,8 +394,8 @@ const AdminDashboard = () => {
         <StatCard
           title="Total Revenue"
           value={formatCurrency(orderStats.totalRevenue)}
-          icon={DollarSign}
-          color="green"
+          icon={PiIcon}
+          color="purple"
           trend={orderStats.monthlyRevenue > 0 ? `+${formatCurrency(orderStats.monthlyRevenue)} this month` : undefined}
           loading={loading}
         />
@@ -390,7 +403,7 @@ const AdminDashboard = () => {
           title="Avg. Order Value"
           value={formatCurrency(orderStats.averageOrderValue)}
           icon={TrendingUp}
-          color="purple"
+          color="green"
           loading={loading}
         />
         <StatCard

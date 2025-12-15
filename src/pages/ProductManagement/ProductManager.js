@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { collection, getDocs, deleteDoc, doc, updateDoc, writeBatch } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { Link } from "react-router-dom";
+import PiNetworkIcon from '../../assets/pi-store.svg';
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, Grid, List, Plus, Edit, Trash2, Eye, Package,
@@ -21,6 +22,19 @@ import { formatCurrency } from "../../utils/formatUtils";
  * - Advanced Search & Filters
  * - Product Visibility Control
  */
+const PiIcon = ({ className, size = 24, color = "currentColor" }) => (
+  <img 
+    src={PiNetworkIcon} 
+    alt="Pi Network" 
+    className={className}
+    style={{ 
+      width: size, 
+      height: size,
+      // Ajustez la couleur via un filtre CSS pour correspondre au thème
+      filter: color.includes('purple-600') ? 'brightness(0) saturate(100%) invert(39%) sepia(57%) saturate(415%) hue-rotate(91deg) brightness(96%) contrast(94%)' : 'none'
+    }}
+  />
+);
 const ProductManager = () => {
   // Data States
   const [products, setProducts] = useState([]);
@@ -546,8 +560,9 @@ const ProductManager = () => {
                 <p className="text-gray-600 text-sm font-medium">Total Value</p>
                 <h3 className="text-2xl font-bold text-purple-600 mt-1">{formatCurrency(stats.totalValue)}</h3>
               </div>
-              <div className="bg-purple-100 p-3 rounded-xl">
-                <DollarSign className="w-5 h-5 text-purple-600" />
+              {/* Ici, on remplace l'icône et on ajuste les classes Tailwind */}
+              <div className="bg-purple-100 p-3 rounded-xl flex items-center justify-center">
+                <PiIcon className="w-6 h-6 text-purple-600" />
               </div>
             </div>
           </Card>

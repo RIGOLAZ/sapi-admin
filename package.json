@@ -1,5 +1,5 @@
 {
-  "name": "kamikoto-admin",
+  "name": "sapi-admin",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -12,6 +12,7 @@
     "dotenv": "^16.4.5",
     "firebase": "^10.13.2",
     "framer-motion": "^10.16.4",
+    "lucide-react": "^0.560.0",
     "postcss-cli": "^11.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

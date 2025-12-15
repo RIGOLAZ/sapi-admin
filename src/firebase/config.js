@@ -1,81 +1,73 @@
+// sapi-admin/src/firebase/config.js
 import { initializeApp } from "firebase/app";
-import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
-import { initializeFirestore } from "firebase/firestore"; 
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-// Firebase configuration using environment variables only
+// CONFIG EN DUR (comme vous l'avez)
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  apiKey: "AIzaSyAnpKv7fQ-AkdUZJzL9QFe2djTwmtHhngM",
+  authDomain: "sapi-54976.firebaseapp.com",
+  projectId: "sapi-54976",
+  storageBucket: "sapi-54976.firebasestorage.app",
+  messagingSenderId: "511963758704",
+  appId: "1:511963758704:web:fc5a7068647b9db77574b5",
+  measurementId: "G-9D56P3MNL0"
 };
 
-// Log configuration status for debugging
-console.log('Firebase Configuration Status:', {
-  apiKey: firebaseConfig.apiKey ? 'Configured' : 'Missing',
-  authDomain: firebaseConfig.authDomain ? 'Configured' : 'Missing',
-  projectId: firebaseConfig.projectId ? 'Configured' : 'Missing',
-  storageBucket: firebaseConfig.storageBucket ? 'Configured' : 'Missing',
-  messagingSenderId: firebaseConfig.messagingSenderId ? 'Configured' : 'Missing',
-  appId: firebaseConfig.appId ? 'Configured' : 'Missing',
+console.log('🔥 Firebase Admin Config (hardcoded):', {
+  projectId: firebaseConfig.projectId,
+  authDomain: firebaseConfig.authDomain,
+  appId: firebaseConfig.appId
 });
 
-// Initialize Firebase app with error handling
-let app, auth, db;
+// ENLEVEZ la vérification des variables .env
+// SUPPRIMEZ ce bloc :
+// if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+//   console.error('❌ ERREUR: Configuration Firebase ADMIN manquante!');
+//   console.error('Vérifiez vos variables .env pour sapi-admin');
+//   console.error('API Key présente:', !!firebaseConfig.apiKey);
+//   console.error('Project ID:', firebaseConfig.projectId);
+// }
+
+let adminApp;
+let auth;
+let db;
+let storage;
 
 try {
-  // Check if all required config values are present
-  const requiredConfigKeys = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
-  const missingKeys = requiredConfigKeys.filter(key => !firebaseConfig[key]);
-  
-  if (missingKeys.length > 0) {
-    throw new Error(`Missing required Firebase configuration: ${missingKeys.join(', ')}. Please check your environment variables.`);
+  // Vérification SIMPLIFIÉE
+  if (!firebaseConfig.apiKey) {
+    throw new Error('API Key manquante dans la config');
   }
   
-  app = initializeApp(firebaseConfig);
-  console.log('Firebase app initialized successfully');
+  // Initialisation
+  adminApp = initializeApp(firebaseConfig, 'sapi-admin-app');
+  console.log('✅ Firebase ADMIN app initialisée:', adminApp.name);
   
-  auth = getAuth(app);
-  console.log('Firebase auth initialized successfully');
-
-  // Initialize Firestore with experimentalForceLongPolling to fix WebChannel connection issues
-  // This helps prevent 400 Bad Request errors when writing to Firestore
-  db = initializeFirestore(app, {
-    experimentalForceLongPolling: true,
-    useFetchStreams: false
-  }); 
-  console.log('Firestore initialized successfully');
-
-  // Set auth persistence with error handling
-  setPersistence(auth, browserLocalPersistence)
-    .then(() => {
-      console.log('Firebase auth persistence set successfully');
-    })
-    .catch((error) => {
-      console.error("Error setting Firebase auth persistence:", error);
-    });
-
+  // Services
+  auth = getAuth(adminApp);
+  db = getFirestore(adminApp);
+  storage = getStorage(adminApp);
+  
+  console.log('✅ Services initialisés');
+  console.log('✅ Auth:', !!auth);
+  console.log('✅ DB:', !!db);
+  
 } catch (error) {
-  console.error("Error initializing Firebase:", error);
-  // Create mock objects to prevent undefined errors
+  console.error('❌ Erreur d\'initialisation Firebase:', error);
+  
+  // Fallback (gardez votre code existant)
   auth = {
     currentUser: null,
-    onAuthStateChanged: () => () => {},
-    signInWithEmailAndPassword: () => Promise.reject(new Error('Firebase not initialized')),
-    signOut: () => Promise.reject(new Error('Firebase not initialized'))
+    onAuthStateChanged: (callback) => {
+      console.warn('Firebase ADMIN non initialisé - auth mock');
+      return () => {};
+    },
+    // ...
   };
-  
-  db = {
-    collection: () => ({
-      doc: () => ({
-        get: () => Promise.reject(new Error('Firebase not initialized')),
-        set: () => Promise.reject(new Error('Firebase not initialized')),
-        update: () => Promise.reject(new Error('Firebase not initialized'))
-      })
-    })
-  };
+  // ...
 }
 
-export { auth, db }; 
+export { adminApp, auth, db, storage };
+export default adminApp;
