@@ -439,7 +439,7 @@ function Orders() {
         const orderTotal = order.total || order.amount || order.grandTotal || order.finalAmount || 0;
         return orderTotal >= minAmount;
       });
-      console.log(`🔍 Orders: Min amount filter (₹${minAmount}) applied, ${filtered.length} orders remaining`);
+      console.log(`🔍 Orders: Min amount filter (${minAmount}) applied, ${filtered.length} orders remaining`);
     }
     
     // Carrier filter - filter by shipping carrier
@@ -1179,7 +1179,7 @@ function Orders() {
                 onChange={(e) => setFilters(prev => ({ ...prev, minAmount: e.target.value }))}
                 className="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               />
-              <span className="absolute left-3 top-3.5 text-gray-400">₹</span>
+              <span className="absolute left-3 top-3.5 text-gray-400">π</span>
             </div>
           </div>
         </div>

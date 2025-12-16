@@ -2,32 +2,66 @@ import { useState } from "react";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useNavigate } from "react-router-dom";
+import PiNet from "../../assets/piIcon.svg";
 import { motion } from "framer-motion";
 import {
-  Package, DollarSign, Image as ImageIcon, Tag, Info, Check,
+  Package, Image as ImageIcon, Tag, Info, Check,
   X, Plus, Trash2, Globe, Shield
 } from "react-feather";
 import { Button, Card, Input, Alert, Badge } from "../../components/ui";
 import { toast } from "react-toastify";
+import { PiIcon } from "lucide-react";
 
 const productTypes = [
-  'Notebooks and Journals',
-  'Pens and Pencils',
-  'Paper and Notepads',
-  'Planners and Calendars',
-  'Office Supplies',
-  'Art Supplies',
-  'Desk Accessories',
-  'Cards and Envelopes',
-  'Writing Accessories',
-  'Gift Wrap and Packaging',
+  "Camera",
+  "Smartphone",
+  "Laptop",
+  "Tablet",
+  "Smartwatch",
+  "Router",
+  "Smart Home Device",
+  "Accessory",
+  "Television",
+  "Audio Equipment",
+  "Networking Equipment",
+  "Wearable",
+  "Storage Device",
+  "Peripheral",
+  "Gaming Device",
+  "Power bank",
+  "Charger",
+  "Projector",
+  "Monitor",
+  "Printer",
+  "circuit breaker",
+  "switch",
+  "socket"
 ];
 
 const brands = [
-  'Camel', 'Faber-Castell', 'Staedtler', 'Doms', 'Camlin', 'Luxor',
-  'Monami', 'Schneider', 'Pentel', 'Pilot', 'Kokuyo', 'Nataraj',
-  'OHPen', 'Bic', 'Zebra', 'Stabilo',
+  "Legrand",
+  "Hager",
+  "Siemens",
+  "Wago",
+  "Schneider",
+  "Apple",
+  "Samsung",
+  "Google",
+  "Lenovo",
+  "HP",
+  "Asus",
+  "Acer",
+  "Huawei",
+  "Dell",
+  "hisense",
+  "Hikvision",
+  "Bosch",
+  "Panasonic",
+  "Philips",
+  "Sony"
 ];
+
+
 
 /**
  * Enhanced Add Product Page with Modern UI
@@ -69,7 +103,7 @@ const AddProduct = () => {
 
   const tabs = [
     { id: 'basic', label: 'Basic Info', icon: Package },
-    { id: 'pricing', label: 'Pricing', icon: DollarSign },
+    { id: 'pricing', label: 'Pricing', icon: PiIcon },
     { id: 'images', label: 'Images', icon: ImageIcon },
     { id: 'details', label: 'Details', icon: Info },
     { id: 'warranty', label: 'Warranty', icon: Shield }
@@ -143,16 +177,19 @@ const AddProduct = () => {
         .replace(/\s+/g, '-')
         .replace(/[^\w-]/g, '');
 
-      const { slug, ...productToSave } = {
+      const productToSave = {
         ...newProduct,
         slug: formattedSlug,
-        sellingPrice: Number(newProduct.sellingPrice || newProduct.price),
-        mrp: Number(newProduct.mrp || newProduct.price),
-        price: Number(newProduct.sellingPrice || newProduct.price),
-        stock: Number(newProduct.stock),
+        sellingPrice: Number(newProduct.sellingPrice || newProduct.price) || 0,
+        mrp: Number(newProduct.mrp || newProduct.price) || 0,
+        price: Number(newProduct.sellingPrice || newProduct.price) || 0,
+        stock: Number(newProduct.stock) || 0,
         createdAt: new Date(),
         updatedAt: new Date()
       };
+
+      // Supprimer le slug du document car c'est l'ID
+      delete productToSave.slug;
 
       const productRef = doc(db, "products", formattedSlug);
       await setDoc(productRef, productToSave);
@@ -251,10 +288,17 @@ const AddProduct = () => {
     return 0;
   };
 
+  // Fonction pour gérer les onglets avec une clé stable
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+  };
+
   return (
     <motion.div
+      key="add-product-page"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className="max-w-6xl mx-auto space-y-6"
     >
       {/* Header */}
@@ -279,10 +323,10 @@ const AddProduct = () => {
             const Icon = tab.icon;
             return (
               <motion.button
-                key={tab.id}
+                key={`tab-${tab.id}`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 className={`flex items-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'bg-blue-600 text-white shadow-lg'
@@ -300,8 +344,10 @@ const AddProduct = () => {
       {/* Basic Info Tab */}
       {activeTab === 'basic' && (
         <motion.div
+          key="basic-tab"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="space-y-6"
         >
           <Card title="Basic Information" icon={<Package className="w-5 h-5 text-blue-600" />}>
@@ -326,7 +372,7 @@ const AddProduct = () => {
                 >
                   <option value="">Select Brand</option>
                   {brands.map((brand) => (
-                    <option key={brand} value={brand}>{brand}</option>
+                    <option key={`brand-${brand}`} value={brand}>{brand}</option>
                   ))}
                 </select>
               </div>
@@ -342,7 +388,7 @@ const AddProduct = () => {
                 >
                   <option value="">Select Category</option>
                   {productTypes.map((type) => (
-                    <option key={type} value={type}>{type}</option>
+                    <option key={`type-${type}`} value={type}>{type}</option>
                   ))}
                 </select>
               </div>
@@ -355,6 +401,7 @@ const AddProduct = () => {
                 onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
                 error={errors.stock}
                 required
+                min="0"
               />
 
               <div className="col-span-1 md:col-span-2">
@@ -395,6 +442,7 @@ const AddProduct = () => {
                         setNewProduct({ ...newProduct, slug: e.target.value });
                         setSlugAvailability({ checked: false, available: false });
                       }}
+                      onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
                       placeholder="product-url-slug"
                       className={`flex-1 px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                         slugAvailability.checked
@@ -424,7 +472,18 @@ const AddProduct = () => {
           </Card>
 
           <div className="flex justify-end">
-            <Button onClick={() => setActiveTab('pricing')} icon={<DollarSign className="w-4 h-4" />} iconPosition="right">
+            <Button 
+              onClick={() => setActiveTab('pricing')} 
+              icon={
+                <img 
+                  src={PiNet} 
+                  alt="pi-icon" 
+                  className="w-4 h-4"
+                  key="pi-icon"
+                />
+              } 
+              iconPosition="right"
+            >
               Next: Pricing
             </Button>
           </div>
@@ -434,34 +493,40 @@ const AddProduct = () => {
       {/* Pricing Tab */}
       {activeTab === 'pricing' && (
         <motion.div
+          key="pricing-tab"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="space-y-6"
         >
-          <Card title="Pricing Information" icon={<DollarSign className="w-5 h-5 text-green-600" />}>
+          <Card title="Pricing Information" icon={<PiIcon className="w-5 h-5 text-green-600" />}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
                 label="MRP (Maximum Retail Price)"
                 type="number"
-                placeholder="₹ 0.00"
+                placeholder=" 0.00"
                 value={newProduct.mrp}
                 onChange={(e) => setNewProduct({ ...newProduct, mrp: e.target.value })}
-                icon={<DollarSign className="w-4 h-4" />}
+                icon={<PiIcon className="w-4 h-4" />}
+                min="0"
+                step="0.01"
               />
 
               <Input
                 label="Selling Price"
                 type="number"
-                placeholder="₹ 0.00"
+                placeholder=" 0.00"
                 value={newProduct.sellingPrice}
                 onChange={(e) => setNewProduct({
                   ...newProduct,
                   sellingPrice: e.target.value,
                   price: e.target.value
                 })}
-                icon={<DollarSign className="w-4 h-4" />}
+                icon={<PiIcon className="w-4 h-4" />}
                 error={errors.sellingPrice}
                 required
+                min="0"
+                step="0.01"
               />
 
               {discountPercentage() > 0 && (
@@ -480,7 +545,11 @@ const AddProduct = () => {
             <Button onClick={() => setActiveTab('basic')} variant="outline">
               Back
             </Button>
-            <Button onClick={() => setActiveTab('images')} icon={<ImageIcon className="w-4 h-4" />} iconPosition="right">
+            <Button 
+              onClick={() => setActiveTab('images')} 
+              icon={<ImageIcon className="w-4 h-4" />} 
+              iconPosition="right"
+            >
               Next: Images
             </Button>
           </div>
@@ -490,8 +559,10 @@ const AddProduct = () => {
       {/* Images Tab */}
       {activeTab === 'images' && (
         <motion.div
+          key="images-tab"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="space-y-6"
         >
           <Card title="Product Images" icon={<ImageIcon className="w-5 h-5 text-pink-600" />}>
@@ -501,7 +572,7 @@ const AddProduct = () => {
             />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
               {['image', 'image2', 'image3'].map((imgKey, index) => (
-                <div key={imgKey}>
+                <div key={`image-${index}`}>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     {index === 0 ? 'Primary Image' : index === 1 ? 'Secondary Image' : 'Tertiary Image'}
                     {index === 0 && <span className="text-red-500 ml-1">*</span>}
@@ -516,6 +587,7 @@ const AddProduct = () => {
                   />
                   {newProduct[imgKey] && (
                     <motion.div
+                      key={`preview-${index}`}
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       className="mt-2 relative group"
@@ -530,7 +602,8 @@ const AddProduct = () => {
                       />
                       <button
                         onClick={() => setNewProduct({ ...newProduct, [imgKey]: '' })}
-                        className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-600"
+                        type="button"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -545,7 +618,11 @@ const AddProduct = () => {
             <Button onClick={() => setActiveTab('pricing')} variant="outline">
               Back
             </Button>
-            <Button onClick={() => setActiveTab('details')} icon={<Info className="w-4 h-4" />} iconPosition="right">
+            <Button 
+              onClick={() => setActiveTab('details')} 
+              icon={<Info className="w-4 h-4" />} 
+              iconPosition="right"
+            >
               Next: Details
             </Button>
           </div>
@@ -555,19 +632,22 @@ const AddProduct = () => {
       {/* Details Tab */}
       {activeTab === 'details' && (
         <motion.div
+          key="details-tab"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="space-y-6"
         >
           {/* Tags */}
           <Card title="Product Tags" icon={<Tag className="w-5 h-5 text-indigo-600" />}>
             <div className="flex flex-wrap gap-2 mb-4">
               {newProduct.tags.map((tag, index) => (
-                <Badge key={index} variant="info">
+                <Badge key={`tag-${index}`} variant="info">
                   {tag}
                   <button
                     onClick={() => removeTag(tag)}
                     className="ml-2 hover:text-red-500"
+                    type="button"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -579,7 +659,7 @@ const AddProduct = () => {
                 placeholder="Add a tag"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                 className="mb-0 flex-1"
               />
               <Button onClick={addTag} icon={<Plus className="w-4 h-4" />}>
@@ -592,11 +672,12 @@ const AddProduct = () => {
           <Card title="Key Features" icon={<Check className="w-5 h-5 text-green-600" />}>
             <div className="space-y-2 mb-4">
               {newProduct.features.map((feature, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={`feature-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <span className="text-gray-700">• {feature}</span>
                   <button
                     onClick={() => removeFeature(index)}
                     className="text-red-500 hover:text-red-700"
+                    type="button"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -608,7 +689,7 @@ const AddProduct = () => {
                 placeholder="Add a feature"
                 value={featureInput}
                 onChange={(e) => setFeatureInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
                 className="mb-0 flex-1"
               />
               <Button onClick={addFeature} icon={<Plus className="w-4 h-4" />}>
@@ -621,7 +702,7 @@ const AddProduct = () => {
           <Card title="Specifications" icon={<Info className="w-5 h-5 text-blue-600" />}>
             <div className="space-y-2 mb-4">
               {newProduct.specifications.map((spec, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={`spec-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex-1 grid grid-cols-2 gap-4">
                     <span className="font-semibold text-gray-700">{spec.key}:</span>
                     <span className="text-gray-600">{spec.value}</span>
@@ -629,6 +710,7 @@ const AddProduct = () => {
                   <button
                     onClick={() => removeSpecification(index)}
                     className="text-red-500 hover:text-red-700 ml-4"
+                    type="button"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -641,6 +723,7 @@ const AddProduct = () => {
                 value={specKey}
                 onChange={(e) => setSpecKey(e.target.value)}
                 className="mb-0"
+                onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
               />
               <div className="flex gap-2">
                 <Input
@@ -648,6 +731,7 @@ const AddProduct = () => {
                   value={specValue}
                   onChange={(e) => setSpecValue(e.target.value)}
                   className="mb-0 flex-1"
+                  onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
                 />
                 <Button onClick={addSpecification} icon={<Plus className="w-4 h-4" />}>
                   Add
@@ -703,7 +787,11 @@ const AddProduct = () => {
             <Button onClick={() => setActiveTab('images')} variant="outline">
               Back
             </Button>
-            <Button onClick={() => setActiveTab('warranty')} icon={<Shield className="w-4 h-4" />} iconPosition="right">
+            <Button 
+              onClick={() => setActiveTab('warranty')} 
+              icon={<Shield className="w-4 h-4" />} 
+              iconPosition="right"
+            >
               Next: Warranty
             </Button>
           </div>
@@ -713,8 +801,10 @@ const AddProduct = () => {
       {/* Warranty Tab */}
       {activeTab === 'warranty' && (
         <motion.div
+          key="warranty-tab"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="space-y-6"
         >
           <Card title="Warranty & Guarantee" icon={<Shield className="w-5 h-5 text-yellow-600" />}>

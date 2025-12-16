@@ -383,7 +383,7 @@ const CouponManager = () => {
               className="shadow border rounded py-2 px-3 text-gray-700 w-full"
             >
               <option value="percentage">Percentage (%)</option>
-              <option value="fixed">Fixed Amount (₹)</option>
+              <option value="fixed">Fixed Amount (π)</option>
             </select>
           </div>
           
@@ -397,7 +397,7 @@ const CouponManager = () => {
               value={couponData.discountValue}
               onChange={(e) => setCouponData({...couponData, discountValue: e.target.value})}
               className="shadow border rounded py-2 px-3 text-gray-700 w-full"
-              placeholder={couponData.discountType === "percentage" ? "e.g., 25 (for 25%)" : "e.g., 500 (for ₹500)"}
+              placeholder={couponData.discountType === "percentage" ? "e.g., 25 (for 25%)" : "e.g., 500 (for π500)"}
               min="0"
               required
             />
@@ -410,7 +410,7 @@ const CouponManager = () => {
           {couponData.discountType === "percentage" && (
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2">
-                Maximum Discount Amount (₹)
+                Maximum Discount Amount (π)
               </label>
               <input
                 type="number"
@@ -427,7 +427,7 @@ const CouponManager = () => {
           {/* Minimum Order Amount */}
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">
-              Minimum Order Amount (₹)
+              Minimum Order Amount (π)
             </label>
             <input
               type="number"
@@ -591,7 +591,7 @@ const CouponManager = () => {
                               <div className="font-medium truncate">{product.name}</div>
                               <div className="text-xs text-gray-500">
                                 {product.brand ? `${product.brand} • ` : ''}
-                                ₹{product.price || '0'}
+                                π{product.price || '0'}
                               </div>
                             </div>
                           </li>
@@ -731,13 +731,13 @@ const CouponManager = () => {
                   <td className="border px-4 py-2">
                     {coupon.discountType === "percentage" 
                       ? `${coupon.discountValue}%` 
-                      : `₹${coupon.discountValue}`}
+                      : `π${coupon.discountValue}`}
                     {coupon.discountType === "percentage" && coupon.maxDiscountAmount > 0 && 
-                      ` (up to ₹${coupon.maxDiscountAmount})`
+                      ` (up to π${coupon.maxDiscountAmount})`
                     }
                     {coupon.minOrderAmount > 0 && 
                       <div className="text-xs text-gray-500">
-                        Min order: ₹{coupon.minOrderAmount}
+                        Min order: π{coupon.minOrderAmount}
                       </div>
                     }
                   </td>

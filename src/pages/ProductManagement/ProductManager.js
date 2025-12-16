@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { collection, getDocs, deleteDoc, doc, updateDoc, writeBatch } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { Link } from "react-router-dom";
-import PiNetworkIcon from '../../assets/pi-store.svg';
+import PiRound from '../../assets/piRound.svg';
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, Grid, List, Plus, Edit, Trash2, Eye, Package,
   TrendingUp, TrendingDown, AlertTriangle, Check, X, Filter,
-  Download, RefreshCw, DollarSign, BarChart2, Archive
+  Download, RefreshCw, BarChart2, Archive
 } from "react-feather";
 import { Button, Card, Input, Modal, Badge, Alert, LoadingSpinner } from "../../components/ui";
 import { toast } from "react-toastify";
@@ -24,7 +24,7 @@ import { formatCurrency } from "../../utils/formatUtils";
  */
 const PiIcon = ({ className, size = 24, color = "currentColor" }) => (
   <img 
-    src={PiNetworkIcon} 
+    src={PiRound} 
     alt="Pi Network" 
     className={className}
     style={{ 

@@ -11,35 +11,52 @@ import {
 import { db } from "../firebase";
 
 const productTypes = [
-  "Notebooks and Journals",
-  "Pens and Pencils",
-  "Paper and Notepads",
-  "Planners and Calendars",
-  "Office Supplies",
-  "Art Supplies",
-  "Desk Accessories",
-  "Cards and Envelopes",
-  "Writing Accessories",
-  "Gift Wrap and Packaging",
+  "Camera",
+  "Smartphone",
+  "Laptop",
+  "Tablet",
+  "Smartwatch",
+  "Router",
+  "Smart Home Device",
+  "Accessory",
+  "Television",
+  "Audio Equipment",
+  "Networking Equipment",
+  "Wearable",
+  "Storage Device",
+  "Peripheral",
+  "Gaming Device",
+  "Power bank",
+  "Charger",
+  "Projector",
+  "Monitor",
+  "Printer",
+  "circuit breaker",
+  "switch",
+  "socket"
 ];
 
 const brands = [
-  "Camel",
-  "Faber-Castell",
-  "Staedtler",
-  "Doms",
-  "Camlin",
-  "Luxor",
-  "Monami",
+  "Legrand",
+  "Hager",
+  "Siemens",
+  "Wago",
   "Schneider",
-  "Pentel",
-  "Pilot",
-  "Kokuyo",
-  "Nataraj",
-  "OHPen",
-  "Bic",
-  "Zebra",
-  "Stabilo",
+  "Apple",
+  "Samsung",
+  "Google",
+  "Lenovo",
+  "HP",
+  "Asus",
+  "Acer",
+  "Huawei",
+  "Dell",
+  "hisense",
+  "Hikvision",
+  "Bosch",
+  "Panasonic",
+  "Philips",
+  "Sony"
 ];
 
 const Products = () => {
@@ -157,7 +174,7 @@ const Products = () => {
           <input
             type="number"
             className="border p-2 rounded"
-            placeholder="Price (₹)"
+            placeholder="Price (π)"
             value={editingProduct ? editingProduct.price : newProduct.price}
             onChange={(e) =>
               editingProduct
@@ -281,7 +298,7 @@ const Products = () => {
             <th className="border px-4 py-2">Image</th>
             <th className="border px-4 py-2">Name</th>
             <th className="border px-4 py-2">Description</th>
-            <th className="border px-4 py-2">Price (₹)</th>
+            <th className="border px-4 py-2">Price (π)</th>
             <th className="border px-4 py-2">Brand</th>
             <th className="border px-4 py-2">Stock</th>
             <th className="border px-4 py-2">Type</th>
@@ -301,7 +318,7 @@ const Products = () => {
               <td className="border px-4 py-2">{product.name}</td>
               <td className="border px-4 py-2">{product.description}</td>
               <td className="border px-4 py-2">
-                ₹
+                π
                 {product.price.toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
                 })}

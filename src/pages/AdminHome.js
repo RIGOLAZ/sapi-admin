@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import PiNetworkIcon from '../assets/pi-store.svg';
+import PiRound from '../assets/piRound.svg';
 import { toast } from "react-toastify";
 import { collection, query, getDocs, orderBy, limit } from "firebase/firestore";
 import { db } from '../firebase/config';
@@ -17,7 +17,7 @@ import { Card, LoadingSpinner, Badge } from "../components/ui";
 
 const PiIcon = ({ className, size = 24, color = "currentColor" }) => (
   <img 
-    src={PiNetworkIcon} 
+    src={PiRound} 
     alt="Pi Network" 
     className={className}
     style={{ width: size, height: size }}

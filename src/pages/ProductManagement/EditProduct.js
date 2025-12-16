@@ -1,27 +1,74 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import PiIconSrc from "../../assets/piIcon.svg"; // Renommé pour éviter la confusion
 import { db } from "../../firebase/config";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Package, DollarSign, Image as ImageIcon, Tag, Info, Check,
-  X, Plus, Trash2, Globe, Shield, Save
+  Package, Image as ImageIcon, Tag, Info, Check,
+  X, Plus, Trash2, Globe, Shield, Save, DollarSign
 } from "react-feather";
 import { Button, Card, Input, Alert, Badge, LoadingSpinner } from "../../components/ui";
 import { toast } from "react-toastify";
 
 const productTypes = [
-  'Notebooks and Journals', 'Pens and Pencils', 'Paper and Notepads',
-  'Planners and Calendars', 'Office Supplies', 'Art Supplies',
-  'Desk Accessories', 'Cards and Envelopes', 'Writing Accessories',
-  'Gift Wrap and Packaging',
+  "Camera",
+  "Smartphone",
+  "Laptop",
+  "Tablet",
+  "Smartwatch",
+  "Router",
+  "Smart Home Device",
+  "Accessory",
+  "Television",
+  "Audio Equipment",
+  "Networking Equipment",
+  "Wearable",
+  "Storage Device",
+  "Peripheral",
+  "Gaming Device",
+  "Power bank",
+  "Charger",
+  "Projector",
+  "Monitor",
+  "Printer",
+  "circuit breaker",
+  "switch",
+  "socket"
 ];
 
 const brands = [
-  'Camel', 'Faber-Castell', 'Staedtler', 'Doms', 'Camlin', 'Luxor',
-  'Monami', 'Schneider', 'Pentel', 'Pilot', 'Kokuyo', 'Nataraj',
-  'OHPen', 'Bic', 'Zebra', 'Stabilo',
+  "Legrand",
+  "Hager",
+  "Siemens",
+  "Wago",
+  "Schneider",
+  "Apple",
+  "Samsung",
+  "Google",
+  "Lenovo",
+  "HP",
+  "Asus",
+  "Acer",
+  "Huawei",
+  "Dell",
+  "hisense",
+  "Hikvision",
+  "Bosch",
+  "Panasonic",
+  "Philips",
+  "Sony"
 ];
+
+// Composant d'icône personnalisé pour l'icône Pi
+const PiIcon = ({ className = "w-4 h-4", ...props }) => (
+  <img 
+    src={PiIconSrc} 
+    alt="pi-icon" 
+    className={className}
+    {...props}
+  />
+);
 
 /**
  * Enhanced Edit Product Page with Modern UI
@@ -40,7 +87,7 @@ const EditProduct = () => {
 
   const tabs = [
     { id: 'basic', label: 'Basic Info', icon: Package },
-    { id: 'pricing', label: 'Pricing', icon: DollarSign },
+    { id: 'pricing', label: 'Pricing', icon: PiIcon }, // Utilise le composant PiIcon
     { id: 'images', label: 'Images', icon: ImageIcon },
     { id: 'details', label: 'Details', icon: Info },
     { id: 'warranty', label: 'Warranty', icon: Shield }
@@ -180,6 +227,7 @@ const EditProduct = () => {
 
   return (
     <motion.div
+      key="edit-product-page"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="max-w-6xl mx-auto space-y-6"
@@ -206,7 +254,7 @@ const EditProduct = () => {
             const Icon = tab.icon;
             return (
               <motion.button
-                key={tab.id}
+                key={`tab-${tab.id}`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActiveTab(tab.id)}
@@ -216,7 +264,11 @@ const EditProduct = () => {
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                {typeof Icon === 'function' ? (
+                  <Icon className="w-4 h-4" />
+                ) : (
+                  <img src={Icon} alt="" className="w-4 h-4" />
+                )}
                 {tab.label}
               </motion.button>
             );
@@ -227,8 +279,10 @@ const EditProduct = () => {
       {/* Basic Info Tab */}
       {activeTab === 'basic' && (
         <motion.div
+          key="basic-tab"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="space-y-6"
         >
           <Card title="Basic Information" icon={<Package className="w-5 h-5 text-blue-600" />}>
@@ -250,7 +304,7 @@ const EditProduct = () => {
                 >
                   <option value="">Select Brand</option>
                   {brands.map((brand) => (
-                    <option key={brand} value={brand}>{brand}</option>
+                    <option key={`brand-${brand}`} value={brand}>{brand}</option>
                   ))}
                 </select>
               </div>
@@ -264,7 +318,7 @@ const EditProduct = () => {
                 >
                   <option value="">Select Category</option>
                   {productTypes.map((type) => (
-                    <option key={type} value={type}>{type}</option>
+                    <option key={`type-${type}`} value={type}>{type}</option>
                   ))}
                 </select>
               </div>
@@ -276,6 +330,7 @@ const EditProduct = () => {
                 value={product.stock}
                 onChange={(e) => setProduct({ ...product, stock: e.target.value })}
                 required
+                min="0"
               />
 
               <div className="col-span-1 md:col-span-2">
@@ -300,7 +355,11 @@ const EditProduct = () => {
           />
 
           <div className="flex justify-end">
-            <Button onClick={() => setActiveTab('pricing')} icon={<DollarSign className="w-4 h-4" />} iconPosition="right">
+            <Button 
+              onClick={() => setActiveTab('pricing')} 
+              icon={<PiIcon className="w-4 h-4" />} 
+              iconPosition="right"
+            >
               Next: Pricing
             </Button>
           </div>
@@ -310,33 +369,39 @@ const EditProduct = () => {
       {/* Pricing Tab */}
       {activeTab === 'pricing' && (
         <motion.div
+          key="pricing-tab"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="space-y-6"
         >
-          <Card title="Pricing Information" icon={<DollarSign className="w-5 h-5 text-green-600" />}>
+          <Card title="Pricing Information" icon={<PiIcon className="w-5 h-5 text-green-600" />}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
                 label="MRP (Maximum Retail Price)"
                 type="number"
-                placeholder="₹ 0.00"
+                placeholder=" 0.00"
                 value={product.mrp}
                 onChange={(e) => setProduct({ ...product, mrp: e.target.value })}
-                icon={<DollarSign className="w-4 h-4" />}
+                icon={<PiIcon className="w-4 h-4" />}
+                min="0"
+                step="0.01"
               />
 
               <Input
                 label="Selling Price"
                 type="number"
-                placeholder="₹ 0.00"
+                placeholder=" 0.00"
                 value={product.sellingPrice}
                 onChange={(e) => setProduct({
                   ...product,
                   sellingPrice: e.target.value,
                   price: e.target.value
                 })}
-                icon={<DollarSign className="w-4 h-4" />}
+                icon={<PiIcon className="w-4 h-4" />}
                 required
+                min="0"
+                step="0.01"
               />
 
               {discountPercentage() > 0 && (
@@ -353,7 +418,11 @@ const EditProduct = () => {
 
           <div className="flex justify-between">
             <Button onClick={() => setActiveTab('basic')} variant="outline">Back</Button>
-            <Button onClick={() => setActiveTab('images')} icon={<ImageIcon className="w-4 h-4" />} iconPosition="right">
+            <Button 
+              onClick={() => setActiveTab('images')} 
+              icon={<ImageIcon className="w-4 h-4" />} 
+              iconPosition="right"
+            >
               Next: Images
             </Button>
           </div>
@@ -363,14 +432,16 @@ const EditProduct = () => {
       {/* Images Tab */}
       {activeTab === 'images' && (
         <motion.div
+          key="images-tab"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="space-y-6"
         >
           <Card title="Product Images" icon={<ImageIcon className="w-5 h-5 text-pink-600" />}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {['image', 'image2', 'image3'].map((imgKey, index) => (
-                <div key={imgKey}>
+                <div key={`image-${index}`}>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     {index === 0 ? 'Primary Image' : index === 1 ? 'Secondary Image' : 'Tertiary Image'}
                     {index === 0 && <span className="text-red-500 ml-1">*</span>}
@@ -384,6 +455,7 @@ const EditProduct = () => {
                   />
                   {product[imgKey] && (
                     <motion.div
+                      key={`preview-${index}`}
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       className="mt-2 relative group"
@@ -399,6 +471,7 @@ const EditProduct = () => {
                       <button
                         onClick={() => setProduct({ ...product, [imgKey]: '' })}
                         className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        type="button"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -411,7 +484,11 @@ const EditProduct = () => {
 
           <div className="flex justify-between">
             <Button onClick={() => setActiveTab('pricing')} variant="outline">Back</Button>
-            <Button onClick={() => setActiveTab('details')} icon={<Info className="w-4 h-4" />} iconPosition="right">
+            <Button 
+              onClick={() => setActiveTab('details')} 
+              icon={<Info className="w-4 h-4" />} 
+              iconPosition="right"
+            >
               Next: Details
             </Button>
           </div>
@@ -421,17 +498,19 @@ const EditProduct = () => {
       {/* Details Tab */}
       {activeTab === 'details' && (
         <motion.div
+          key="details-tab"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="space-y-6"
         >
           {/* Tags */}
           <Card title="Product Tags" icon={<Tag className="w-5 h-5 text-indigo-600" />}>
             <div className="flex flex-wrap gap-2 mb-4">
               {product.tags.map((tag, index) => (
-                <Badge key={index} variant="info">
+                <Badge key={`tag-${index}`} variant="info">
                   {tag}
-                  <button onClick={() => removeTag(tag)} className="ml-2 hover:text-red-500">
+                  <button onClick={() => removeTag(tag)} className="ml-2 hover:text-red-500" type="button">
                     <X className="w-3 h-3" />
                   </button>
                 </Badge>
@@ -442,7 +521,7 @@ const EditProduct = () => {
                 placeholder="Add a tag"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                 className="mb-0 flex-1"
               />
               <Button onClick={addTag} icon={<Plus className="w-4 h-4" />}>Add</Button>
@@ -453,9 +532,9 @@ const EditProduct = () => {
           <Card title="Key Features" icon={<Check className="w-5 h-5 text-green-600" />}>
             <div className="space-y-2 mb-4">
               {product.features.map((feature, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={`feature-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <span className="text-gray-700">• {feature}</span>
-                  <button onClick={() => removeFeature(index)} className="text-red-500 hover:text-red-700">
+                  <button onClick={() => removeFeature(index)} className="text-red-500 hover:text-red-700" type="button">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
@@ -466,7 +545,7 @@ const EditProduct = () => {
                 placeholder="Add a feature"
                 value={featureInput}
                 onChange={(e) => setFeatureInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
                 className="mb-0 flex-1"
               />
               <Button onClick={addFeature} icon={<Plus className="w-4 h-4" />}>Add</Button>
@@ -477,21 +556,33 @@ const EditProduct = () => {
           <Card title="Specifications" icon={<Info className="w-5 h-5 text-blue-600" />}>
             <div className="space-y-2 mb-4">
               {product.specifications.map((spec, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={`spec-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex-1 grid grid-cols-2 gap-4">
                     <span className="font-semibold text-gray-700">{spec.key}:</span>
                     <span className="text-gray-600">{spec.value}</span>
                   </div>
-                  <button onClick={() => removeSpecification(index)} className="text-red-500 hover:text-red-700 ml-4">
+                  <button onClick={() => removeSpecification(index)} className="text-red-500 hover:text-red-700 ml-4" type="button">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ))}
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <Input placeholder="Specification name" value={specKey} onChange={(e) => setSpecKey(e.target.value)} className="mb-0" />
+              <Input 
+                placeholder="Specification name" 
+                value={specKey} 
+                onChange={(e) => setSpecKey(e.target.value)} 
+                className="mb-0"
+                onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+              />
               <div className="flex gap-2">
-                <Input placeholder="Value" value={specValue} onChange={(e) => setSpecValue(e.target.value)} className="mb-0 flex-1" />
+                <Input 
+                  placeholder="Value" 
+                  value={specValue} 
+                  onChange={(e) => setSpecValue(e.target.value)} 
+                  className="mb-0 flex-1"
+                  onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+                />
                 <Button onClick={addSpecification} icon={<Plus className="w-4 h-4" />}>Add</Button>
               </div>
             </div>
@@ -536,7 +627,11 @@ const EditProduct = () => {
 
           <div className="flex justify-between">
             <Button onClick={() => setActiveTab('images')} variant="outline">Back</Button>
-            <Button onClick={() => setActiveTab('warranty')} icon={<Shield className="w-4 h-4" />} iconPosition="right">
+            <Button 
+              onClick={() => setActiveTab('warranty')} 
+              icon={<Shield className="w-4 h-4" />} 
+              iconPosition="right"
+            >
               Next: Warranty
             </Button>
           </div>
@@ -546,8 +641,10 @@ const EditProduct = () => {
       {/* Warranty Tab */}
       {activeTab === 'warranty' && (
         <motion.div
+          key="warranty-tab"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="space-y-6"
         >
           <Card title="Warranty & Guarantee" icon={<Shield className="w-5 h-5 text-yellow-600" />}>
